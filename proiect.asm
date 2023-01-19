@@ -41,7 +41,6 @@
     mov bh, 0  ; CURATAM BH
     cmp al, 30h ; TESTAM DACA NR ESTE 0
     je invalid
-    ; TODO: ADD INVALID
     sub al, 48 ; From ASCII to NR
     mov bl, al
     mov ax, a ; Mutam ce avem deja in A
@@ -55,7 +54,16 @@
     ; Directiva .386 ar rezolva o
     ; Dar nu am timp sa testez programul 
     invalid:
-               mov dx, offset eroare
+    ;Afisare \n
+    ;ascii ---> 10 New Line
+    ;ascii ---> 13 Carriage Return
+            MOV dl, 10
+            MOV ah, 02h
+            INT 21h
+            MOV dl, 13
+            MOV ah, 02h
+            INT 21h
+            mov dx, offset eroare
     ; DOS AFISARE (PRINT)
                mov  ah,9
                int  21h
