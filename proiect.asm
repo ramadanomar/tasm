@@ -8,101 +8,24 @@
 .286
 
 .data
-    a      dw 3
-    b      dw 10
-    c      dw 5
+    a      dw 3000
+    b      dw 4000
+    c      dw 5000
     mare   dw 0
     flag   dw 0
     mesaj1 db 'a, b, c - laturi triunghi (nedreptunghic) $'
     mesaj2 db 'a, b, c - nu sunt laturi triunghi $'
-    mesaj3 db 'a, b, c - triunghi dreptunghic$'
-    mesaj4 db 'Introdu 3 numere IN ORDINE CRESCATOARE separa numerele prin enter$'
-
+    mesaj3 db 'a, b, c - laturi triunghi dreptunghic$'
     ; Marime stiva = 256
 .stack 100h
 .code
-
 
     start:     
     ; INITIALIZARE SEGMENT DE DATE
                mov  ax, @data
                mov  ds, ax
-               
-    ;    AFISARE MESAJ INCEPUT
-               mov  dx, offset mesaj4
-               mov  ah, 9
-               int  21h
     
-    ; CITIRE PRIMUL NUMAR
-    citire_nr1:
-	
-               mov  ah,01h
-               int  21h
-                
-    ; Verificare daca tasta introdusa este enter
-               cmp  al,13
-               je   citire_nr2
-	
-    ; Transformare din ASCII in nr
-               sub  al,30h
-               mov  bl,al
-		
-    ; ADAUGARE IN NR
-               mov  ax, a
-               mul  cx
-		
-               add  ax,bx
-               mov  a,ax
-		
-               jmp  citire_nr1
-    
-    ; CITIRE AL DOILEA NUMAR
-    citire_nr2:
-	
-               mov  ah,01h
-               int  21h
-                
-    ; Verificare daca tasta introdusa este enter
-               cmp  al,13
-               je   citire_nr3
-	
-    ; Transformare din ASCII in nr
-               sub  al,30h
-               mov  bl,al
-		
-    ; ADAUGARE IN NR
-               mov  ax, b
-               mul  cx
-		
-               add  ax,bx
-               mov  b,ax
-		
-               jmp  citire_nr2
-    
-    ; CITIRE PRIMUL NUMAR
-    citire_nr3:
-	
-               mov  ah,01h
-               int  21h
-                
-    ; Verificare daca tasta introdusa este enter
-               cmp  al,13
-               je   inceput
-	
-    ; Transformare din ASCII in nr
-               sub  al,30h
-               mov  bl,al
-		
-    ; ADAUGARE IN NR
-               mov  ax, c
-               mul  cx
-		
-               add  ax,bx
-               mov  c,ax
-		
-               jmp  citire_nr3
-    
-    inceput:   
+
     ; AX = operatii aritmetice
     ;Mov the data in memori stored in A into AX Register
                mov  ax, [a]
@@ -137,24 +60,26 @@
     drept:     
     ;    A^2
                mov  ax, [a]
-               imul ax
+               mul ax
                mov  [a], ax
     ;   B^2
                mov  ax, [b]
-               imul ax
+               mul ax
                mov  [b], ax
     ;  C^2
                mov  ax, [c]
-               imul ax
+               mul ax
                mov  [c], ax
             
     ; A^2 + B^2 = C^2
                mov  ax, [a]
                add  ax, [b]
                cmp  ax, [c]
+            ;    pitagora adevarat
                je   estedrept
                mov  dx, offset mesaj1
                jmp  final
+            ;    VERIFICARE TRIUNGHI DREPTUNGHIC
     estedrept: 
                mov  dx, offset mesaj3
                jmp  final
