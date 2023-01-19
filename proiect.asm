@@ -21,82 +21,75 @@
 .stack 100h
 .code
 
-    max macro a,b
-        cmp a,b
-        jle .end
-        mov ax,a
-    .end
-    endm
-
     start:     
     ; INITIALIZARE SEGMENT DE DATE
-               mov ax, @data
-               mov ds, ax
+               mov  ax, @data
+               mov  ds, ax
     
     ; AX = operatii aritmetice
     ;Mov the data in memori stored in A into AX Register
-               mov ax, [a]
-               add ax, [b]
-               cmp ax, [c]
+               mov  ax, [a]
+               add  ax, [b]
+               cmp  ax, [c]
     ;  DACA A+B > C SARI CATRE SALT 1 ALTFEL FLAG
-               jge salt1
+               jge  salt1
     ;    flag++
-               inc flag
+               inc  flag
     salt1:     
-               mov ax,[b]
-               add ax,[c]
-               cmp ax,[a]
+               mov  ax,[b]
+               add  ax,[c]
+               cmp  ax,[a]
     ;  DACA B+C > a SARI CATRE SALT 2
-               jge salt2
+               jge  salt2
     ;    flag++
-               inc flag
+               inc  flag
     salt2:     
-               mov ax,[c]
-               add ax,[a]
-               cmp ax,[b]
+               mov  ax,[c]
+               add  ax,[a]
+               cmp  ax,[b]
     ;  DACA A+C > B SARI CATRE SALT 3
-               jge salt3
+               jge  salt3
     ;    flag++
-               inc flag
+               inc  flag
     salt3:     
-               cmp flag,0
+               cmp  flag,0
     ;  FLAG = 0, nu este triunghi
-               jne netriunghi
+               jne  netriunghi
     ;    Returns the offset into the relevant segment of expression.
-               jmp drept
-    drept:   
-            ;    A^2
-               mov ax, [a]
+               jmp  drept
+    drept:     
+    ;    A^2
+               mov  ax, [a]
                imul ax
-               mov [a], ax
-            ;   B^2
-               mov ax, [b]
+               mov  [a], ax
+    ;   B^2
+               mov  ax, [b]
                imul ax
-               mov [b], ax
-            ;  C^2
-               mov ax, [c]
+               mov  [b], ax
+    ;  C^2
+               mov  ax, [c]
                imul ax
-               mov [c], ax
+               mov  [c], ax
             
-            ; A^2 + B^2 = C^2
-              mov ax, [a]
-              add ax, [b]
-              cmp ax, [c]
-              je estedrept
-              mov dx, offset mesaj1
-              jmp final
-    estedrept:
-            mov dx, offset mesaj3
-            jmp final
+    ; A^2 + B^2 = C^2
+               mov  ax, [a]
+               add  ax, [b]
+               cmp  ax, [c]
+               je   estedrept
+               mov  dx, offset mesaj1
+               jmp  final
+    estedrept: 
+               mov  dx, offset mesaj3
+               jmp  final
     netriunghi:
     ; OFFSET pt mesaj fals
-               mov dx, offset mesaj2
+               mov  dx, offset mesaj2
     final:     
     ; DOS AFISARE (PRINT)
-               mov ah,9
-               int 21h
+               mov  ah,9
+               int  21h
             
     ; DOS END PROGRAM
-               mov ax, 4c00h
-               int 21h
+               mov  ax, 4c00h
+               int  21h
 end start
