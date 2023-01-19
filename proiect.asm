@@ -9,7 +9,7 @@
 
 .data
     a      dw 3
-    b      dw 4
+    b      dw 10
     c      dw 5
     mare   dw 0
     flag   dw 0
