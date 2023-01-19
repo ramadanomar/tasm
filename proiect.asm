@@ -8,14 +8,16 @@
 .286
 
 .data
-    a      dw 3000
-    b      dw 4000
-    c      dw 5000
+    a      dw 0
+    b      dw 0
+    c      dw 0
     mare   dw 0
     flag   dw 0
     mesaj1 db 'a, b, c - laturi triunghi (nedreptunghic) $'
     mesaj2 db 'a, b, c - nu sunt laturi triunghi $'
     mesaj3 db 'a, b, c - laturi triunghi dreptunghic$'
+    mesaj0 db 'Introdu 3 numere in ORDINE CRESCATOARE mai mari decat 0 separate prin enter$'
+    eroare db 'Restartati programul. Inputul nu este VALID.$'
     ; Marime stiva = 256
 .stack 100h
 .code
@@ -24,8 +26,86 @@
     ; INITIALIZARE SEGMENT DE DATE
                mov  ax, @data
                mov  ds, ax
-    
 
+               mov dx , offset mesaj0
+               mov ah, 09h
+               int 21h 
+
+    ; POPULAM VARIABILELE (CITIRE DE LA TASTATURA)
+    
+    ;DOS CITIRE DE LA TASTATURA
+    mov ah, 01h
+    int 21h
+
+    mov cx, 10 ; Constanta formare numar 
+    mov bh, 0  ; CURATAM BH
+    cmp al, 30h ; TESTAM DACA NR ESTE 0
+    je invalid
+    ; TODO: ADD INVALID
+    sub al, 48 ; From ASCII to NR
+    mov bl, al
+    mov ax, a ; Mutam ce avem deja in A
+    mul cx
+    add ax, bx
+    mov a, ax
+    jmp citirePrimul
+
+    ; ADAUGAM END PROGRAM AICI CA NU NE LASA SA SARIM MAI MULT DE
+    ; Relative jump out of range by 004Eh bytes
+    ; Directiva .386 ar rezolva o
+    ; Dar nu am timp sa testez programul 
+    invalid:
+               mov dx, offset eroare
+    ; DOS AFISARE (PRINT)
+               mov  ah,9
+               int  21h
+    
+    ; DOS END PROGRAM
+               mov  ax, 4c00h
+               int  21h
+
+    CitirePrimul:
+        mov ah, 01h
+        int 21h
+        cmp al, 13; CHECK PENTRU ENTER
+        je citireDoi
+        ; Convertire ASCII -> NR
+        sub al, 48
+        ; Valoarea dupa substitutie
+        ; Pregatire pentru Algortim formare nr
+        mov bl,al
+        mov ax, a
+        mul cx
+        add ax, bx ; Algoritm formare nr. nr = nr*10 + cifra citita
+        mov a, ax
+        jmp CitirePrimul
+    
+    CitireDoi:
+        mov ah, 01h
+        int 21h
+        cmp al, 13;
+        je citireTrei
+        sub al, 48 ; ASCII -> NR
+        mov bl, al
+        mov ax, b
+        mul cx
+        add ax, bx ; Constuire nr
+        mov b, ax 
+        jmp CitireDoi
+
+    CitireTrei:
+        mov ah, 01h
+        int 21h
+        cmp al, 13;
+        je inceput
+        sub al, 48 ; ASCII -> NR
+        mov bl, al
+        mov ax, c
+        mul cx
+        add ax, bx ; Constuire nr
+        mov c, ax 
+        jmp CitireTrei
+    inceput:
     ; AX = operatii aritmetice
     ;Mov the data in memori stored in A into AX Register
                mov  ax, [a]
@@ -86,11 +166,13 @@
     netriunghi:
     ; OFFSET pt mesaj fals
                mov  dx, offset mesaj2
+               jmp final
+    
     final:     
     ; DOS AFISARE (PRINT)
                mov  ah,9
                int  21h
-            
+    
     ; DOS END PROGRAM
                mov  ax, 4c00h
                int  21h
